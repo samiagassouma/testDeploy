@@ -1,0 +1,101 @@
+<form action="" (ngSubmit)="addUser()">
+  <input
+    type="text"
+    placeholder="Name"
+    [(ngModel)]="newUser.name"
+    name="name"
+  />
+  <input
+    type="text"
+    placeholder="Last Name"
+    [(ngModel)]="newUser.lastName"
+    name="lastName"
+  />
+  <input
+    type="text"
+    placeholder="Email"
+    [(ngModel)]="newUser.email"
+    name="email"
+  />
+  <input
+    type="text"
+    placeholder="Phone"
+    [(ngModel)]="newUser.phone"
+    name="phone"
+  />
+  <input
+    type="text"
+    placeholder="Address"
+    [(ngModel)]="newUser.address"
+    name="address"
+  />
+  <button type="submit">Add User</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Last Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Address</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of users">
+      <td>{{ user.id }}</td>
+      <td>{{ user.name }}</td>
+      <td>{{ user.lastName }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.address }}</td>
+      <td>
+        <button (click)="toggleUserPopup(user)">Edit</button>
+        <button (click)="deleteUser(user.id)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="showUserPopup" class="popup">
+  <div class="popup-content">
+    <h2>Edit User</h2>
+    <form (ngSubmit)="updateUser()">
+      <input
+        type="text"
+        placeholder="Name"
+        [(ngModel)]="selectedUser.name"
+        name="editName"
+      />
+      <input
+        type="text"
+        placeholder="Last Name"
+        [(ngModel)]="selectedUser.lastName"
+        name="editLastName"
+      />
+      <input
+        type="text"
+        placeholder="Email"
+        [(ngModel)]="selectedUser.email"
+        name="editEmail"
+      />
+      <input
+        type="text"
+        placeholder="Phone"
+        [(ngModel)]="selectedUser.phone"
+        name="editPhone"
+      />
+      <input
+        type="text"
+        placeholder="Address"
+        [(ngModel)]="selectedUser.address"
+        name="editAddress"
+      />
+      <button type="submit">Save</button>
+      <button type="button" (click)="toggleUserPopup(null)">Cancel</button>
+    </form>
+  </div>
+</div>
