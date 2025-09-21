@@ -1,22 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
-import * as dotenv from 'dotenv';
-import { createClient } from '@supabase/supabase-js';
-dotenv.config();
+import { SupabaseService } from 'src/supabase/supabase.service';
 
-
-const supabaseUrl = process.env.SUPABASE_URL!
-const supabaseKey = process.env.SUPABASE_KEY!
-console.log("variables====",supabaseUrl, supabaseKey);
-const supabase = createClient(supabaseUrl, supabaseKey)
 
 
 @Injectable()
 export class PaymentService {
+
+  constructor( private readonly supabaseService: SupabaseService) {}
+
   async create(createPaymentDto: CreatePaymentDto) {
     console.log("createPaymentDto", createPaymentDto);
-    const { data, error } = await supabase
+    const { data, error } = await this.supabaseService.getClient()
   .from('payment')
   .insert(createPaymentDto);  
   if (error) {
@@ -27,7 +23,7 @@ export class PaymentService {
   }
 
   async findAll() {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabaseService.getClient()
   .from('payment')
   .select()
   return data;

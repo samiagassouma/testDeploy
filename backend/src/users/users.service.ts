@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { createClient } from '@supabase/supabase-js'
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { SupabaseService } from 'src/supabase/supabase.service';
 
-
-const supabaseUrl = process.env.SUPABASE_URL!
-const supabaseKey = process.env.SUPABASE_KEY!
-console.log("variables====",supabaseUrl, supabaseKey);
-const supabase = createClient(supabaseUrl, supabaseKey)
 
 
 @Injectable()
 export class UsersService {
+constructor(private readonly supabaseService: SupabaseService) {
+  console.log("SupabaseService injected into UsersService");
+  console.log("Supabase Client:", this.supabaseService.getClient());
+}
+
+
+
   async create(createUserDto: CreateUserDto) {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabaseService.getClient()
   .from('users')
   .insert(createUserDto);
     if (error) {
@@ -25,14 +25,14 @@ export class UsersService {
   }
 
   async findAll() {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabaseService.getClient()
   .from('users')
   .select()
   return data;
   }
 
   async findOne(id: number) {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabaseService.getClient()
   .from('users')
   .select('*')
   .eq('id', id)    // Correct
@@ -41,14 +41,14 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabaseService.getClient()
   .from('users')
   .update(updateUserDto)
   .eq('id', id)
   }
 
   async remove(id: number) {
-    const response = await supabase
+    const response = await this.supabaseService.getClient()
   .from('users')
   .delete()
   .eq('id', id)

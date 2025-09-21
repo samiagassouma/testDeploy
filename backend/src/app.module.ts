@@ -7,23 +7,45 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { PaymentModule } from './payment/payment.module';
 import { Payment } from './payment/entities/payment.entity';
-console.log('HOST:', process.env.HOST);
-console.log('PORT:', process.env.PORT);
-console.log('USER:', process.env.USER);
+import path from 'path';
+import fs from 'fs';
+import { SupabaseModule } from './supabase/supabase.module';
 
+
+const dbHost = readSecret('HOST');
+const dbPort = readSecret('PORT');
+const dbUser = readSecret('USER');
+const dbPassword = readSecret('PASSWORD');
+const dbName = readSecret('DATABASE');
+const supabaseUrl = readSecret('SUPABASE_URL');
+const supabaseKey = readSecret('SUPABASE_KEY');
+
+console.log('HOST:', dbHost);
+console.log('PORT:', dbPort);
+console.log('USER:', dbUser);
+console.log('PASSWORD:', dbPassword);
+console.log('DATABASE:', dbName);
+console.log('SUPABASE_URL:', supabaseUrl);
+console.log('SUPABASE_KEY:', supabaseKey);
+
+function readSecret(file: string): string | undefined {
+  try {
+    return fs.readFileSync(path.join('/etc/secrets', file), 'utf8').trim();
+  } catch {
+    return undefined;
+  }
+}
 
 @Module({
-  imports: [UsersModule,    ConfigModule.forRoot({
-      isGlobal: true,
-     // envFilePath: '.env',
-    }), 
+  imports: [
+    UsersModule, SupabaseModule, PaymentModule,
     TypeOrmModule.forRoot({
       type: 'postgres',   // or 'mysql' | 'sqlite' | 'mariadb'
-      host: process.env.HOST,  // e.g., 'localhost'
-      port: process.env.PORT ? parseInt(process.env.PORT) : 6543, // default port for Postgres
-      username: process.env.USER, 
-      password: process.env.PASSWORD,
-      database: process.env.DATABASE,
+      host: dbHost,  // e.g., 'localhost'
+      port: dbPort ? parseInt(dbPort) : 6543, // default port for Postgres
+      username: dbUser,
+      password: dbPassword,
+      database: dbName,
       entities: [User, Payment],
       synchronize: true,  // auto-create tables (only for dev!)
       ssl: { rejectUnauthorized: false },
