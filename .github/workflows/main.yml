@@ -13,21 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Build and push FRONTEND image
-      - name: Build and Push Frontend Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./frontend
-          push: true
-          tags: docker.io/gassouma530975/frontend:v${{ github.run_number }}
 
-      # Build and push BACKEND image
-      - name: Build and Push Backend Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./backend
-          push: true
-          tags: docker.io/gassouma530975/backend:v${{ github.run_number }}
 
       # Authenticate to AKS
       - name: Get AKS credentials
@@ -37,8 +23,8 @@ jobs:
       # Deploy to Kubernetes
       - name: Deploy to Kubernetes
         run: |
-          kubectl set image --namespace development deployment/frontend-deployment frontend=docker.io/gassouma530975/frontend:v${{ github.run_number }}
-          kubectl set image --namespace deployment/backend-deployment backend=docker.io/gassouma530975/backend:v${{ github.run_number }}
+          kubectl set image --namespace development deployment/frontend-deployment frontend=docker.io/gassouma530975/testdeploy:front
+          kubectl set image --namespace deployment/backend-deployment backend=docker.io/gassouma530975/testdeploy:back
 
       # Wait for rollout
       - name: Wait for rollout
