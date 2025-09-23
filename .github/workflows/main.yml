@@ -1,0 +1,47 @@
+name: Build, Push Frontend + Backend and Deploy to AKS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      # Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Build and push FRONTEND image
+      - name: Build and Push Frontend Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: docker.io/gassouma530975/frontend:v${{ github.run_number }}
+
+      # Build and push BACKEND image
+      - name: Build and Push Backend Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: docker.io/gassouma530975/backend:v${{ github.run_number }}
+
+      # Authenticate to AKS
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials --resource-group myResourceGroup --name myAKSCluster --overwrite-existing
+
+      # Deploy to Kubernetes
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image --namespace development deployment/frontend-deployment frontend=docker.io/gassouma530975/frontend:v${{ github.run_number }}
+          kubectl set image --namespace deployment/backend-deployment backend=docker.io/gassouma530975/backend:v${{ github.run_number }}
+
+      # Wait for rollout
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/frontend-deployment
+          kubectl rollout status deployment/backend-deployment
