@@ -12,7 +12,8 @@ jobs:
       # Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up Buildx
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       # Build and push FRONTEND image
@@ -21,7 +22,7 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: docker.io/gassouma530975/frontend:v${{ github.run_number }}
+          tags: docker.io/gassouma530975/testdeploy:frontendv${{ github.run_number }}
 
       # Build and push BACKEND image
       - name: Build and Push Backend Docker image
@@ -29,7 +30,7 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: docker.io/gassouma530975/backend:v${{ github.run_number }}
+          tags: docker.io/gassouma530975/testdeploy:backendv${{ github.run_number }}
 
       # Authenticate to AKS
       - name: Get AKS credentials
@@ -38,8 +39,8 @@ jobs:
       # Deploy to Kubernetes
       - name: Deploy to Kubernetes
         run: |
-          kubectl set image --namespace development deployment/frontend-deployment frontend=docker.io/gassouma530975/frontend:v${{ github.run_number }}
-          kubectl set image --namespace deployment/backend-deployment backend=docker.io/gassouma530975/backend:v${{ github.run_number }}
+          kubectl set image --namespace development deployment/frontend-deployment frontend=docker.io/gassouma530975/testdeploy:frontendv${{ github.run_number }}
+          kubectl set image --namespace development deployment/backend-deployment backend=docker.io/gassouma530975/testdeploy:backendv${{ github.run_number }}
       # Wait for rollout
       - name: Wait for rollout
         run: |
