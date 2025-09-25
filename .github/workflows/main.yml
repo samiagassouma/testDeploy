@@ -24,7 +24,25 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: ./frontend
+          context: ./backend
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: docker.io/gassouma530975/testdeploy:front2
+          tags: docker.io/gassouma530975/testdeploy:back2
+  deploy:
+    needs: build  
+    runs-on: self-hosted
+    steps:
+      # Authenticate to AKS
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials --resource-group myResourceGroup --name myAKSCluster --overwrite-existing
+      # Deploy to Kubernetes
+      - name: Deploy to Kubernetes
+        run: |
+          
+          kubectl set image --namespace deployment/backend-deployment backend=docker.io/gassouma530975/back2
+      # Wait for rollout
+      - name: Wait for rollout
+        run: |
+
+          kubectl rollout status deployment/backend-deployment
