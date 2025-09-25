@@ -40,9 +40,9 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           
-          kubectl set image --namespace deployment/backend-deployment backend=docker.io/gassouma530975/testdeploy:back2
+          kubectl set image --namespace development deployment/backend-deployment backend=docker.io/gassouma530975/testdeploy:back2
       # Wait for rollout
       - name: Wait for rollout
         run: |
 
-          kubectl rollout status deployment/backend-deployment
+          kubectl rollout status deployment/backend-deployment --namespace development
