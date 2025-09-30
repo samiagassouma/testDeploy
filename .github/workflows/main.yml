@@ -28,7 +28,7 @@ jobs:
           context: ./frontend
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: docker.io/gassouma530975/frontend:v${{ github.run_number }}
+          tags: docker.io/gassouma530975/testdeploy:frontendv${{ github.run_number }}
   deploy:
     needs: build  
     runs-on: self-hosted
@@ -41,7 +41,7 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           
-          kubectl set image --namespace development deployment/frontend-deployment frontend=docker.io/gassouma530975/frontend:v${{ github.run_number }}
+          kubectl set image --namespace development deployment/frontend-deployment frontend=docker.io/gassouma530975/testdeploy:frontendv${{ github.run_number }}
 
       # Wait for rollout
       - name: Wait for rollout
