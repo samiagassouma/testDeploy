@@ -11,11 +11,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: 'docker.io/testdeploy:frontendv16'
+          image-ref: 'docker.io/testdeploy:${{ github.sha }}'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
