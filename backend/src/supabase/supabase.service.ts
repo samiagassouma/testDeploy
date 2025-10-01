@@ -6,7 +6,7 @@ import fs from 'fs';
 
 function readSecret(file: string): string | undefined {
   try {
-    return fs.readFileSync(path.join('/etc/secrets', file), 'utf8').trim();
+    return fs.readFileSync(path.join('C:\\Users\\gasso\\Dropbox\\PC\\Downloads\\env', file), 'utf8').trim();
   } catch {
     return undefined;
   }

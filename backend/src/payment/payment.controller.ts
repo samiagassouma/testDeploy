@@ -14,6 +14,7 @@ export class PaymentController {
 
   @Get('webhook')
   findAll() {
+    console.log("GET /webhook called");
     return this.paymentService.findAll();
   }
 
